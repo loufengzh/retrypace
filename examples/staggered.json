@@ -1,0 +1,13 @@
+{
+  "clients": 50,
+  "max_attempts": 4,
+  "base_ms": 100,
+  "cap_ms": 500,
+  "attempt_ms": 25,
+  "deadline_ms": 800,
+  "stagger_ms": 10,
+  "window_ms": 100,
+  "concurrency_limit": 10,
+  "seed": 42,
+  "strategy": "equal-jitter"
+}
