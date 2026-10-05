@@ -7,6 +7,35 @@ from dataclasses import replace
 from . import __version__
 from .model import Config, STRATEGIES, compare, simulate
 
+MAX_CONFIG_BYTES = 64 * 1024
+
+
+def _unique_object(pairs):
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError("duplicate JSON configuration key")
+        result[key] = value
+    return result
+
+
+def _invalid_constant(_):
+    raise ValueError("nonstandard JSON numeric constant")
+
+
+def _load_config(path):
+    # Bound the bytes before decoding or parsing, including JSON whitespace.
+    with open(path, "rb") as source:
+        raw = source.read(MAX_CONFIG_BYTES + 1)
+    if len(raw) > MAX_CONFIG_BYTES:
+        raise ValueError("configuration exceeds 64 KiB")
+    try:
+        value = json.loads(raw.decode("utf-8"), object_pairs_hook=_unique_object,
+                           parse_constant=_invalid_constant)
+    except RecursionError as exc:
+        raise ValueError("configuration nesting exceeds the supported limit") from exc
+    return Config.from_dict(value)
+
 
 def _positive(value):
     number = int(value)
@@ -32,8 +61,7 @@ def main(argv=None):
         parser.error("CSV exports events; cannot combine with --compare or --summary-only")
     try:
         if args.config:
-            with open(args.config, encoding="utf-8") as source:
-                config = Config.from_dict(json.load(source))
+            config = _load_config(args.config)
         else:
             config = Config()
         if args.strategy:

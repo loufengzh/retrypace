@@ -51,6 +51,8 @@ Erstelle eine JSON-Datei. Fehlende Felder erhalten die folgenden Standardwerte. 
 
 Außer Frist, Startabstand und Seed müssen alle Zahlen positive Ganzzahlen sein. Boolesche Werte sind kein Ersatz für Ganzzahlen. Andere Zahlen sind auf 1.000.000.000 begrenzt. Unbekannte Felder verursachen einen Fehler. `clients × max_attempts` darf 1.000.000 nicht überschreiten; große Berichte können trotzdem viel Speicher benötigen.
 
+`--config` akzeptiert ein UTF-8-JSON-Objekt ohne BOM mit höchstens 64 KiB (65.536 Bytes), einschließlich Leerraum. Doppelte JSON-Schlüssel werden abgelehnt, auch bei gleichen Werten oder unterschiedlichen JSON-Escape-Schreibweisen desselben Schlüssels; der letzte Wert überschreibt den vorherigen nicht. NaN und Infinity werden ebenfalls abgelehnt. Ungültige, zu große oder übermäßig verschachtelte Eingaben beenden den Befehl mit Exitcode 1 ohne Bericht, bevor Strategieüberschreibungen oder CI-Grenzprüfungen angewendet werden. Die Bytegrenze gilt für das Einlesen von CLI-Dateien; `Config.from_dict` prüft ein bereits eingelesenes Mapping und kann keine Duplikate erkennen, die ein anderer JSON-Parser verworfen hat.
+
 ## Modell und Strategien
 
 Jeder zugelassene Versuch gilt als fehlgeschlagen. Die Wartezeit beginnt nach seinem Ende. Jeder Client wiederholt nacheinander und beeinflusst die anderen nicht. Die exponentielle Obergrenze der ersten Wiederholung entspricht der Basis, verdoppelt sich anschließend und wird bei `cap_ms` begrenzt.

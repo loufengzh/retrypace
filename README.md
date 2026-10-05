@@ -51,6 +51,8 @@ All strategies retain the 100-request initial concurrency spike. In this scenari
 
 All times are integer milliseconds. JSON may specify any subset; omitted fields use these defaults. Unknown keys and invalid types are errors, including booleans in numeric fields.
 
+`--config` accepts a UTF-8 JSON object without a BOM, at most 64 KiB (65,536 bytes), including whitespace. Duplicate JSON keys are rejected, even if their values match or their spellings use different JSON escapes; there is no last-key-wins behavior. NaN and Infinity are rejected. Invalid, oversized or excessively nested input exits 1 with no report, before strategy overrides or CI gates are applied. The byte limit applies to CLI file loading; `Config.from_dict` validates an already parsed mapping and cannot detect duplicate keys lost by another JSON loader.
+
 ```json
 {
   "clients": 100,

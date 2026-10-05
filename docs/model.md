@@ -51,6 +51,8 @@ Report schema version is 1. Top-level `model` is `all-attempts-fail`. Inputs are
 
 ## Complexity and limits
 
+The CLI reads at most 64 KiB plus one detection byte from a configuration file before decoding or parsing. It requires BOM-free UTF-8 JSON with unique decoded object keys and rejects NaN/Infinity. Invalid or oversized configuration produces exit 1 and no report; overrides and gates run only after validation. This byte bound does not apply to a caller-owned dictionary passed to `Config.from_dict`, and a dictionary cannot retain evidence of duplicate JSON keys already discarded by its loader.
+
 For N admitted attempts, scheduling is O(N), pressure analysis is O(N log N), and storage is O(N). Exponential ceilings saturate, preventing huge powers for large retry indices. Validation caps configured attempts at one million; this is a safety bound, not a latency or memory guarantee. `--summary-only` reduces serialized output, not analysis memory.
 
 ## Scope of claims

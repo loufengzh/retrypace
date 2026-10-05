@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Reject duplicate JSON configuration keys before CLI strategy overrides or pressure gates can hide an ambiguous policy.
+- Bound CLI configuration reads to 64 KiB of BOM-free UTF-8 JSON; reject nonstandard numeric constants and handle excessive nesting without a traceback.
+- Add configuration-boundary regressions and document the contract in English, Chinese, Russian and German. Scheduling and seeded example results are unchanged.
+
 ## 0.1.0
 
 - Add dependency-free Python CLI and library for reproducible all-failure retry schedules.
