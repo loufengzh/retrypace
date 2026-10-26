@@ -71,6 +71,21 @@ class CLITests(unittest.TestCase):
                 self.assertEqual(result.stdout, "")
                 self.assertNotIn("Traceback", result.stderr)
 
+    def test_explicit_empty_config_rejected_before_audit(self):
+        # An empty shell expansion is not an instruction to use defaults.
+        for args in (("--config", ""), ("--config=",),
+                     ("--config", "", "--strategy", "fixed"),
+                     ("--config=", "--compare"),
+                     ("--config", "", "--format", "csv"),
+                     ("--config", "", "--max-peak-concurrency", "100",
+                      "--summary-only")):
+            with self.subTest(args=args):
+                result = self.run_cli(*args)
+                self.assertEqual(result.returncode, 1, result.stderr)
+                self.assertEqual(result.stdout, "")
+                self.assertIn("retrypace:", result.stderr)
+                self.assertNotIn("Traceback", result.stderr)
+
     def test_invalid_argument_combinations(self):
         for args in (("--compare", "--strategy", "fixed"),
                      ("--format", "csv", "--summary-only"),

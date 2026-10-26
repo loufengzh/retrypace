@@ -60,7 +60,7 @@ def main(argv=None):
     if args.format == "csv" and (args.compare or args.summary_only):
         parser.error("CSV exports events; cannot combine with --compare or --summary-only")
     try:
-        if args.config:
+        if args.config is not None:
             config = _load_config(args.config)
         else:
             config = Config()

@@ -1,5 +1,7 @@
 # retrypace
 
+Only omitting `--config` selects defaults. An explicitly empty path (`--config ""` or `--config=`), including an empty shell-variable expansion, is an unreadable configuration: exit 1 with no report. Strategy overrides and pressure gates do not bypass this validation.
+
 **A small, offline retry-schedule auditor for design reviews and CI.**
 
 Given a retry policy and a fleet of clients, retrypace answers:

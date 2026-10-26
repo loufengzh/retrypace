@@ -1,5 +1,7 @@
 # Einstieg in retrypace
 
+Standardwerte gelten nur, wenn `--config` weggelassen wird. Ein ausdrücklich leerer Pfad (`--config ""` oder `--config=`), auch durch eine leere Shell-Variable, gilt als nicht lesbare Konfiguration: Exit-Code 1, ohne Bericht. Strategieüberschreibungen und Schwellwertprüfungen umgehen diese Validierung nicht.
+
 [English](../README.md) · [中文](zh-CN.md) · [Русский](ru.md)
 
 retrypace ist ein Offline-Werkzeug zur Prüfung von Wiederholungsplänen in Architekturgesprächen und CI. Es zeigt, wie viele vollständige Versuche in ein Zeitbudget passen, wie viele Anfragen gleichzeitig laufen und wie groß Spitzen innerhalb eines gleitenden Zeitfensters werden.
