@@ -98,7 +98,9 @@ python -m retrypace --config examples/staggered.json \
 
 Gates inspect **all attempts**, including initial requests. Equality passes; a strictly higher value fails. With `--compare`, any failing strategy fails the command. Use the library for custom retry-only gates. CSV exports per-attempt `client,attempt,start_ms,end_ms`; it cannot be combined with `--compare` or `--summary-only`.
 
-Exit status: `0` success, `1` unreadable/invalid configuration, `2` exceeded gate or CLI usage error. Gate failures preserve machine-readable stdout; diagnostics go to stderr. `--help` and `--version` are available.
+Exit status: `0` success, `1` unreadable/invalid configuration or report-output failure, `2` exceeded gate or CLI usage error. Gate failures preserve machine-readable stdout; diagnostics go to stderr. `--help` and `--version` are available.
+
+JSON/CSV report writes and flushes are checked. Unavailable or failing stdout exits 1 with a sanitized diagnostic, overriding any pressure-gate outcome. A failed destination may already contain a partial report; output is not transactional. This handling covers reports, not argparse help/version output.
 
 ## Library
 

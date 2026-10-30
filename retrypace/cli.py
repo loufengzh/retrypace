@@ -2,6 +2,7 @@
 import argparse
 import csv
 import json
+import os
 import sys
 from dataclasses import replace
 from . import __version__
@@ -70,12 +71,33 @@ def main(argv=None):
     except (OSError, ValueError, TypeError) as error:
         print(f"retrypace: {error}", file=sys.stderr)
         return 1
-    if args.format == "json":
-        print(json.dumps(report, indent=2, sort_keys=True, allow_nan=False))
-    else:
-        writer = csv.DictWriter(sys.stdout, fieldnames=("client", "attempt", "start_ms", "end_ms"))
-        writer.writeheader()
-        writer.writerows(report["events"])
+    try:
+        if sys.stdout is None:
+            raise OSError("stdout is unavailable")
+        if args.format == "json":
+            print(json.dumps(report, indent=2, sort_keys=True, allow_nan=False))
+        else:
+            writer = csv.DictWriter(sys.stdout, fieldnames=("client", "attempt", "start_ms", "end_ms"))
+            writer.writeheader()
+            writer.writerows(report["events"])
+        # Detect buffered failures before interpreter shutdown can change the
+        # exit status to 120 and emit an unsanitized stream diagnostic.
+        sys.stdout.flush()
+    except (OSError, ValueError) as error:
+        # Discard buffered output rather than retrying the failed destination
+        # at shutdown. Keep unrelated file descriptors untouched.
+        try:
+            target = sys.stdout.fileno()
+            sink = os.open(os.devnull, os.O_WRONLY)
+            if sink != target:
+                try:
+                    os.dup2(sink, target)
+                finally:
+                    os.close(sink)
+        except (OSError, ValueError, AttributeError):
+            sys.stdout = None
+        print(f"retrypace: output failed ({type(error).__name__})", file=sys.stderr)
+        return 1
     reports = report.values() if args.compare else [report]
     failed = False
     for result in reports:

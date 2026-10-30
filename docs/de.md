@@ -97,7 +97,9 @@ python -m retrypace --config examples/staggered.json \
 
 Grenzprüfungen berücksichtigen auch die ersten Anfragen. Gleichheit besteht die Prüfung; nur ein größerer Wert verletzt sie. Bei `--compare` genügt eine verletzende Strategie für einen Fehlerstatus. Der Bericht bleibt auch dann auf stdout verfügbar; Hinweise erscheinen auf stderr. CSV enthält `client,attempt,start_ms,end_ms` und lässt sich nicht mit `--compare` oder `--summary-only` kombinieren.
 
-Exitcodes: 0 bedeutet Erfolg, 1 bedeutet unlesbare oder ungültige Konfiguration, 2 bedeutet Grenzverletzung oder falsche CLI-Verwendung. `--help` und `--version` sind verfügbar. `--summary-only` verkleinert die Ausgabe, nicht den Speicherbedarf der Berechnung.
+Exitcodes: 0 bedeutet Erfolg, 1 bedeutet unlesbare oder ungültige Konfiguration oder fehlgeschlagene Berichtsausgabe, 2 bedeutet Grenzverletzung oder falsche CLI-Verwendung. `--help` und `--version` sind verfügbar. `--summary-only` verkleinert die Ausgabe, nicht den Speicherbedarf der Berechnung.
+
+Schreiben und Leeren des Ausgabepuffers für JSON/CSV-Berichte werden geprüft. Ist stdout nicht verfügbar oder schlägt die Ausgabe fehl, endet der Befehl mit Code 1 und einer Diagnose ohne Details des ursprünglichen Fehlers, unabhängig vom Ergebnis der Grenzprüfung. Das Ziel kann bereits einen Teilbericht enthalten; die Ausgabe ist nicht transaktional. Dies gilt für Berichte, nicht für Hilfe- oder Versionsausgaben von argparse.
 
 ## Python-Bibliothek
 
